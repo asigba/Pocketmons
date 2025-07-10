@@ -16,4 +16,5 @@ class Battle {
         void enemyTurn();
         bool isBattleOver();
         void displayBattleStatus();
+        void switchPokemon();
 };

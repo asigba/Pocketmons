@@ -22,7 +22,7 @@ void Player::switchPokemon(int index){
 void Player::displayTeam() {
     int count = 0;
     while(count < (int)team.size()) {
-        cout << team[count].getName() << ", HP: " << team[count].getHP() << ", Level: " << team[count].getLevel() << "\n";
+        cout << count + 1 << "."<< team[count].getName() << ", HP: " << team[count].getHP() << ", Level: " << team[count].getLevel() << "\n";
         count++;
     }   
 }

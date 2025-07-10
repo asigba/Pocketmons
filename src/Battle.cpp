@@ -1,17 +1,12 @@
 #include "Battle.hpp"
 using namespace std;
 
-Battle::Battle(Player* setPlayer, Player* setEnemy) {
-    player = setPlayer;
-    enemy = setEnemy;
-    battleActive = true;
-
+Battle::Battle(Player* setPlayer, Player* setEnemy): player(setPlayer), enemy(setEnemy), battleActive(true) {
     if (player->getActivePokemon()->getSpeed() > enemy->getActivePokemon()->getSpeed()) {
         turn = 0;
     } else {
         turn = 1;
     }
-    
 }
 
 bool Battle::isBattleOver() {
@@ -22,11 +17,24 @@ bool Battle::isBattleOver() {
     return false;
 }
 
+void Battle::switchPokemon() {
+    int index;
+    cout << "Your Team" << "\n";
+    player->displayTeam();
+    cout << "Enter index of pokemon(1-6): " << "\n";
+    cin >> index;
+    if ((index - 1) == player->getCurrPokemon()){
+            playerTurn();
+    }
+    player->switchPokemon(index - 1);   
+}
+
 void Battle::playerTurn() {
     if(player->getActivePokemon()->isAlive()) {
         cout << "Your Turn. Choose: " << "\n";
         cout << "1. Attack" << "\n";  
-        cout << "2. Switch" << "\n";  
+        cout << "2. Switch Pokemon" << "\n"; 
+        cout << "3. Use Item" << "\n"; 
         cout << "Enter choice: " << "\n";
 
         int choice;
@@ -37,20 +45,11 @@ void Battle::playerTurn() {
             enemy->getActivePokemon()->takeDamage(damage);
             cout << player->getActivePokemon()->getName() << "  attacks for " << damage << " damage!" << "\n"; 
         } else if (choice == 2) {
-            int index;
-            cout << "Enter index of pokemon(1-6): " << "\n";
-            cin >> index;
-            player->switchPokemon(index - 1);      
+            switchPokemon(); 
         }
     } else {
-        cout << "Must Switch" << "\n";
-        int index;
-        cout << "Enter index of pokemon(1-6): " << "\n";
-        cin >> index;
-        if ((index - 1) == player->getCurrPokemon()){
-            playerTurn();
-        }
-        player->switchPokemon(index - 1);   
+        cout << "Switch? " << "\n";
+        switchPokemon(); 
     }
 }
 
