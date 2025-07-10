@@ -1,11 +1,14 @@
 #include "Game.hpp"
-#include "Pokemon.hpp"
-
+#include "Battle.hpp"
 #include <SFML/Graphics.hpp>
 
 Game::Game() {
-    Pokemon testPokemon("Pikachu", 5, "Electric");
-    std::cout << testPokemon.getName() << "Level" << testPokemon.getLevel() << "\n";
+    Pokemon player("Pikachu", 5, "Electric");    
+    Pokemon enemy("Charmander", 4, "Fire");   
+
+    //Test Battle
+    Battle battle(&player, &enemy);
+    battle.startBattle();
 }
 
 void Game::run() {

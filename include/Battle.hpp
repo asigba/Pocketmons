@@ -1,4 +1,5 @@
 #include <iostream>
+#include "Pokemon.hpp"
 using namespace std;
 
 class Battle {
@@ -7,6 +8,7 @@ class Battle {
         Pokemon* enemyPokemon;
         bool battleActive;
         int turn;
+
     public:
         Battle(Pokemon* player, Pokemon* enemy);
         void startBattle();
