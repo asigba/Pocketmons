@@ -36,7 +36,15 @@ int Pokemon::getSpeed() {
     return speed;
 }
 void Pokemon::takeDamage(int damage){
-    HP = HP - damage;
+    if(HP > 0) {
+        HP = HP - damage;
+        if(HP < 0) {
+            HP = 0;
+        }
+    } else {
+        HP = 0;
+    }
+    
 }
 bool Pokemon::isAlive() {
     if(HP > 0) {

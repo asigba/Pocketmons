@@ -15,11 +15,13 @@ void Player::addPokemon(Pokemon newPokemon){
     
 }
 void Player::switchPokemon(int index){
-    activePokemon = index;
+    if(index >= 0 && index < (int)team.size()) {
+        activePokemon = index;
+    }
 }
 void Player::displayTeam() {
     int count = 0;
-    while(count < team.size()) {
+    while(count < (int)team.size()) {
         cout << team[count].getName() << ", HP: " << team[count].getHP() << ", Level: " << team[count].getLevel() << "\n";
         count++;
     }   
@@ -48,7 +50,7 @@ string Player::getName() {
     return name;
 }
 Pokemon* Player::getActivePokemon() {
-    if(!team.empty()) {
+    if(!team.empty() && activePokemon < (int)team.size()) {
         return &team[activePokemon];
     }
     return nullptr;

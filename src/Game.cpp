@@ -11,8 +11,8 @@ Game::Game() {
     Pokemon pikachu("Pikachu", 5, "Electric");    
     Pokemon charmander("Charmander", 4, "Fire");
     Pokemon bulbasaur("Bulbasaur", 5, "Grass");    
-    Pokemon pidgey("Pidgey", 4, "Flying");  
-    Pokemon pichu("Pichu", 5, "Electric");    
+    Pokemon pidgey("Pidgey", 2, "Flying");  
+    Pokemon pichu("Pichu", 3, "Electric");    
     Pokemon squirtle("Squirtle", 4, "Water");     
 
     // Adding pokemon to each trainer
