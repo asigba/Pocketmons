@@ -1,16 +1,16 @@
 #include <iostream>
-#include "Pokemon.hpp"
+#include "Player.hpp"
 using namespace std;
 
 class Battle {
     private:
-        Pokemon* playerPokemon;
-        Pokemon* enemyPokemon;
+        Player* player;
+        Player* enemy;
         bool battleActive;
         int turn;
 
     public:
-        Battle(Pokemon* player, Pokemon* enemy);
+        Battle(Player* setPlayer, Player* setEnemy);
         void startBattle();
         void playerTurn();
         void enemyTurn();

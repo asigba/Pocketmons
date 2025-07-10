@@ -1,11 +1,12 @@
 #include "Battle.hpp"
 using namespace std;
 
-Battle::Battle(Pokemon* player, Pokemon* enemy) {
-    playerPokemon = player;
-    enemyPokemon = enemy;
+Battle::Battle(Player* setPlayer, Player* setEnemy) {
+    player = setPlayer;
+    enemy = setEnemy;
     battleActive = true;
-    if (playerPokemon->getSpeed() > enemyPokemon->getSpeed()) {
+
+    if (player->getActivePokemon()->getSpeed() > enemy->getActivePokemon()->getSpeed()) {
         turn = 0;
     } else {
         turn = 1;
@@ -14,7 +15,7 @@ Battle::Battle(Pokemon* player, Pokemon* enemy) {
 }
 
 bool Battle::isBattleOver() {
-    if (!playerPokemon->isAlive() || !enemyPokemon->isAlive()) {
+    if (!player->getActivePokemon()->isAlive() || !enemy->getActivePokemon()->isAlive()) {
         battleActive = false;
         return true;
     }
@@ -23,16 +24,22 @@ bool Battle::isBattleOver() {
 
 void Battle::playerTurn() {
     cout << "Your Turn. Choose: " << "\n";
-    cout << "1. Attack" << "\n";    
+    cout << "1. Attack" << "\n";  
+    cout << "2. Switch" << "\n";  
     cout << "Enter choice: " << "\n";
 
     int choice;
     cin >> choice;
 
     if (choice == 1) {
-        int damage = playerPokemon->getAttack() - enemyPokemon->getDefense();
-        enemyPokemon->takeDamage(damage);
-        cout << playerPokemon->getName() << "  attacks for " << damage << " damage!" << "\n"; 
+        int damage = player->getActivePokemon()->getAttack() - enemy->getActivePokemon()->getDefense();
+        enemy->getActivePokemon()->takeDamage(damage);
+        cout << player->getActivePokemon()->getName() << "  attacks for " << damage << " damage!" << "\n"; 
+    } else if (choice == 2) {
+        int index;
+        cout << "Enter index of pokemon(1-6): " << "\n";
+        cin >> index;
+        player->switchPokemon(index - 1);      
     }
     
 }
@@ -40,15 +47,20 @@ void Battle::playerTurn() {
 void Battle::enemyTurn() {
     cout << "Enemy Turn" << "\n";
 
-    int damage = enemyPokemon->getAttack() - playerPokemon->getDefense();
-    playerPokemon->takeDamage(damage);
-    cout << enemyPokemon->getName() << "  attacks for " << damage << " damage!" << "\n"; 
+    int damage = enemy->getActivePokemon()->getAttack() - player->getActivePokemon()->getDefense();
+    player->getActivePokemon()->takeDamage(damage);
+    cout << enemy->getActivePokemon()->getName() << "  attacks for " << damage << " damage!" << "\n"; 
+
+    if(!enemy->getActivePokemon()->isAlive()) {
+        cout << enemy->getActivePokemon()->getName() << " has fainted" << "\n";
+        enemy->switchPokemon(enemy->getCurrPokemon() + 1);
+    }
  
 }
 
 void Battle::displayBattleStatus() {
-    cout << playerPokemon->getName() << "'s HP: "<< playerPokemon->getHP() << "\n";
-    cout << enemyPokemon->getName() << "'s HP: "<< enemyPokemon->getHP() << "\n";
+    cout << player->getActivePokemon()->getName() << "'s HP: "<< player->getActivePokemon()->getHP() << "\n";
+    cout << enemy->getActivePokemon()->getName() << "'s HP: "<< enemy->getActivePokemon()->getHP() << "\n";
 }
 
 void Battle::startBattle() {
@@ -68,7 +80,7 @@ void Battle::startBattle() {
 
     }
 
-    if(playerPokemon->isAlive()) {
+    if(player->getActivePokemon()->isAlive()) {
         cout << "You Win" << "\n";
     }
     cout << "Game Over" << "\n";

@@ -3,8 +3,25 @@
 #include <SFML/Graphics.hpp>
 
 Game::Game() {
-    Pokemon player("Pikachu", 5, "Electric");    
-    Pokemon enemy("Charmander", 4, "Fire");   
+
+    Player player("Alex");
+    Player enemy("Josh");
+
+    // Creating pokemon
+    Pokemon pikachu("Pikachu", 5, "Electric");    
+    Pokemon charmander("Charmander", 4, "Fire");
+    Pokemon bulbasaur("Bulbasaur", 5, "Grass");    
+    Pokemon pidgey("Pidgey", 4, "Flying");  
+    Pokemon pichu("Pichu", 5, "Electric");    
+    Pokemon squirtle("Squirtle", 4, "Water");     
+
+    // Adding pokemon to each trainer
+    player.addPokemon(pikachu);
+    player.addPokemon(charmander);
+    player.addPokemon(squirtle);
+    enemy.addPokemon(pichu);
+    enemy.addPokemon(bulbasaur);
+    enemy.addPokemon(pidgey);
 
     //Test Battle
     Battle battle(&player, &enemy);
