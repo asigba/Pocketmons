@@ -1,6 +1,7 @@
 #include <iostream>
-using namespace std;
 #include "Move.hpp"
+
+using namespace std;
 
 class Pokemon {
     private:
@@ -17,6 +18,7 @@ class Pokemon {
         Pokemon(string setName, int setLevel, string setType);
         void showMoves();
         void addMove(Move move);
+        Move* getMove(int index);
         int getLevel();
         int getHP();
         int getMaxHp();

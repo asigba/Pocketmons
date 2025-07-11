@@ -32,16 +32,23 @@ int Pokemon::getSpeed() {
     return speed;
 }
 
-void showMoves() {
+void Pokemon::showMoves() {
     for(int i = 0; i < 4; i++){
         cout<< i + 1 <<". " <<moves[i] << "\n";
     }
 }
 
-void addMove(Move move) {
+void Pokemon::addMove(Move move) {
     if(moves.size() < 4) {
         moves.push_back(move);
     }
+}
+
+Move* Pokemon::getMove(int target) {
+    if(target < 4) {
+        return &moves[target];
+    }
+    return nullptr;
 }
 
 void Pokemon::takeDamage(int damage){

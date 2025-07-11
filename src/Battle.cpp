@@ -41,7 +41,12 @@ void Battle::playerTurn() {
         cin >> choice;
 
         if (choice == 1) {
-            int damage = player->getActivePokemon()->getAttack() - enemy->getActivePokemon()->getDefense();
+            cout<< "Choose your move: " << "\n";
+            player->getActivePokemon()->showMoves();
+            int move;
+            cin >> move;
+            
+            int damage = player->getActivePokemon()->getMove(move - 1)->getDamage() - enemy->getActivePokemon()->getDefense();
             enemy->getActivePokemon()->takeDamage(damage);
             cout << player->getActivePokemon()->getName() << "  attacks for " << damage << " damage!" << "\n"; 
         } else if (choice == 2) {
