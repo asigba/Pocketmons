@@ -3,11 +3,7 @@
 
 using namespace std;
 
-Pokemon::Pokemon(string setName, int setLevel, string setType) {
-    name = setName;
-    level = setLevel;
-    type = setType;
-
+Pokemon::Pokemon(string setName, int setLevel, string setType): name(setName), level(setLevel), type(setType) {
     HP = 50 + (level * 2);
     attack = 20 + (level * 2);
     defense = 15 + (level * 2);
@@ -35,6 +31,19 @@ int Pokemon::getDefense(){
 int Pokemon::getSpeed() {
     return speed;
 }
+
+void showMoves() {
+    for(int i = 0; i < 4; i++){
+        cout<< i + 1 <<". " <<moves[i] << "\n";
+    }
+}
+
+void addMove(Move move) {
+    if(moves.size() < 4) {
+        moves.push_back(move);
+    }
+}
+
 void Pokemon::takeDamage(int damage){
     if(HP > 0) {
         HP = HP - damage;

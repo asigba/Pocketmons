@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+#include "Move.hpp"
 
 class Pokemon {
     private:
@@ -10,9 +11,12 @@ class Pokemon {
         int defense;
         int speed;
         string type;
+        vector<Move> moves;
     
     public:
         Pokemon(string setName, int setLevel, string setType);
+        void showMoves();
+        void addMove(Move move);
         int getLevel();
         int getHP();
         int getMaxHp();
