@@ -33,8 +33,8 @@ int Pokemon::getSpeed() {
 }
 
 void Pokemon::showMoves() {
-    for(int i = 0; i < 4; i++){
-        cout<< i + 1 <<". " <<moves[i] << "\n";
+    for(int i = 0; i < (int)moves.size(); i++){
+        cout<< i + 1 <<". " << moves[i].getName() << "\n";
     }
 }
 

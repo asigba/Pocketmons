@@ -61,7 +61,7 @@ void Battle::playerTurn() {
 void Battle::enemyTurn() {
     cout << "Enemy Turn" << "\n";
 
-    int damage = enemy->getActivePokemon()->getAttack() - player->getActivePokemon()->getDefense();
+    int damage = enemy->getActivePokemon()->getMove(0)->getDamage() - player->getActivePokemon()->getDefense();
     player->getActivePokemon()->takeDamage(damage);
     cout << enemy->getActivePokemon()->getName() << "  attacks for " << damage << " damage!" << "\n"; 
 

@@ -1,8 +1,12 @@
-#include "Move.hpp";
+#include "Move.hpp"
+#include <iostream>
 
-Move::Move(string setType, int setUsageLimt, int setDamage): type(setType), usageLimit(setUsageLimit), damage(setDamage){
+Move::Move(string setName, string setType, int setUsageLimit, int setDamage): name(setName),type(setType), usageLimit(setUsageLimit), damage(setDamage){
 }
 
+string Move::getName() {
+    return name;
+}
 string Move::getType(){
     return type;
 }

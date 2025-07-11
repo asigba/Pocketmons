@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Move.hpp"
+#include <vector>
 
 using namespace std;
 
