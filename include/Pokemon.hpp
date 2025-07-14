@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include "Move.hpp"
 #include <vector>
