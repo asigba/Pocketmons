@@ -59,7 +59,7 @@ void Game::handleEvents() {
 void Game::update() {
    
     if(currentState == OVERWORLD) {
-        if(overworld->checkEncounter()) {
+        if(overworld->justEncountered) {
             wildPokemon = new Pokemon("Pidgey", 3, "Flying");
             wildPokemon->addMove(Move("Tackle","Normal",35,40));
 
