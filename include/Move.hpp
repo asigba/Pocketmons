@@ -11,7 +11,7 @@ class Move {
     
     public:
         Move(string setName, string setType, int setUsageLimit, int setDamage);
-        string getName();
+        string getName() const;
         string getType();
         int getUsageLimit();
         int getDamage();

@@ -4,7 +4,7 @@
 Move::Move(string setName, string setType, int setUsageLimit, int setDamage): name(setName),type(setType), usageLimit(setUsageLimit), damage(setDamage){
 }
 
-string Move::getName() {
+string Move::getName() const{
     return name;
 }
 string Move::getType(){

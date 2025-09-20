@@ -69,10 +69,6 @@ bool Pokemon::isAlive() {
         return false;
     }
 }
-void Pokemon::displayInfo() {
-    
-}
-
-vector<Move> Pokemon::getMoves() const {
+const std::vector<Move>& Pokemon::getMoves() const{
     return moves;
 }

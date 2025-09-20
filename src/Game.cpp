@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "Overworld.hpp"
+#include "Battle.hpp"
 #include <SFML/Graphics.hpp>
 
 Game::Game() : window(sf::VideoMode(640, 448), "Pocketmons"), running(true){
@@ -86,7 +87,7 @@ void Game::render() {
     // Render the overworld
     if(currentState == OVERWORLD) {
         overworld->render(window);
-    } else if (currentState == BATTLE && currentBATTLE && wildPokemon) {
+    } else if (currentState == BATTLE && currentBattle && wildPokemon) {
         sf::Font font;
         font.loadFromFile("assets/arial.ttf");
 
@@ -110,7 +111,7 @@ void Game::render() {
         wildText.setPosition(400,50);
         wildText.setString(
             wildPokemon->getName() + " HP: " +
-            std::to_string(mainPlayer->getHP())
+            std::to_string(wildPokemon->getHP())
         );
         window.draw(wildText);
 
@@ -120,21 +121,20 @@ void Game::render() {
         moveBox.setPosition(50,500);
         window.draw(moveBox);
 
+        const auto& moves = mainPlayer->getActivePokemon()->getMoves();
         // Draw move names
-        for(size_t i = 0; i < mainPlayer->getActivePokemon()->getMoves().size(); ++i){
+        for(size_t i = 0; i < moves.size(); ++i){
             sf::Text moveText;
             moveText.setFont(font);
             moveText.setCharacterSize(20);
             moveText.setFillColor(sf::Color::Yellow);
             moveText.setPosition(70 + i * 180, 520);
             moveText.setString(
-                std::to_string(i + 1) + ". " + 
-                mainPlayer->getActivePokemon()->getMoves()[i].getName()
+                std::to_string(i + 1) + ". " + moves[i].getName()
             );
-            window.draw(moveText)
+            
+            window.draw(moveText);
         }
     }
-    
-    
     window.display();
 }
