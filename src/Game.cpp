@@ -1,9 +1,8 @@
 #include "Game.hpp"
-#include "Battle.hpp"
 #include "Overworld.hpp"
 #include <SFML/Graphics.hpp>
 
-Game::Game() : window(sf::VideoMode(640, 448), "Pocketmons"), running(true) {
+Game::Game() : window(sf::VideoMode(640, 448), "Pocketmons"), running(true){
     window.setFramerateLimit(60);
     
     // Create the main player
@@ -22,6 +21,7 @@ Game::Game() : window(sf::VideoMode(640, 448), "Pocketmons"), running(true) {
     
     // Create the overworld
     overworld = new Overworld(mainPlayer);
+    currentState = OVERWORLD;
 }
 
 Game::~Game() {
@@ -57,7 +57,27 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-    overworld->update();
+   
+    if(currentState == OVERWORLD) {
+        if(overworld->checkEncounter()) {
+            wildPokemon = new Pokemon("Pidgey", 3, "Flying");
+            wildPokemon->addMove(Move("Tackle","Normal",35,40));
+
+            // Start a battle
+            currentBattle = new Battle(mainPlayer, wildPokemon);
+            currentState = BATTLE;
+            overworld->justEncountered = false;
+        }
+    } else if(currentState == BATTLE) {
+        if (currentBattle) {
+            currentBattle->startBattle();
+            delete currentBattle;
+            currentBattle = nullptr;
+            delete wildPokemon;
+            wildPokemon = nullptr;
+            currentState = OVERWORLD;
+        }
+    }
 }
 
 void Game::render() {

@@ -9,6 +9,14 @@ Battle::Battle(Player* setPlayer, Player* setEnemy): player(setPlayer), enemy(se
     }
 }
 
+Battle::Battle(Player* setPlayer, Pokemon* setEnemyPokemon): player(setPlayer), pokemon(setEnemyPokemon) {
+    if (player->getActivePokemon()->getSpeed() > pokemon->getSpeed()) {
+        turn = 0;
+    } else {
+        turn = 1;
+    }
+}
+
 bool Battle::isBattleOver() {
     if (!player->hasAlivePokemon() || !enemy->hasAlivePokemon()) {
         battleActive = false;

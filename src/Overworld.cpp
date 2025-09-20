@@ -4,7 +4,7 @@
 using namespace std;
 
 
-Overworld::Overworld(Player* mainPlayer): player(mainPlayer), playerX(2), playerY(2), mapWidth(10), mapHeight(7) {
+Overworld::Overworld(Player* mainPlayer): player(mainPlayer), playerX(2), playerY(2){
     initializeMap();
 }
 
@@ -13,12 +13,16 @@ void Overworld::handleInput(sf::Event& event) {
         switch(event.key.code){
             case(sf::Keyboard::Up):
                 movePlayer(0, -1);
+                break;
             case(sf::Keyboard::Down):
                 movePlayer(0,1);
+                break;
             case(sf::Keyboard::Left):
                 movePlayer(-1,0);
+                break;
             case(sf::Keyboard::Right):
                 movePlayer(1,0);
+                break;
             default:
                 break;
         }
@@ -87,22 +91,26 @@ void Overworld::movePlayer(int deltaX, int deltaY) {
         playerX = newX;
         playerY = newY;
 
-        if (worldMap[newX][newY] == '.') {
-            checkEncounter();
+        if (worldMap[newY][newX] == '.') {
+            justEncountered = checkEncounter();
+        } else {
+            justEncountered = false;
         }
     }
 }
 
 void Overworld::initializeMap() {
     worldMap = {
-        {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
-        {'#', '.', '.', '.', '.', '.', '.', '.', '.', '#'},
-        {'#', '.', 'P', '.', '.', '.', '.', '.', '.', '#'},
-        {'#', '.', '.', '.', '~', '~', '.', '.', '.', '#'},
-        {'#', '.', '.', '.', '~', '~', '.', '.', '.', '#'},
-        {'#', '.', '.', '.', '.', '.', '.', '.', '.', '#'},
+        {'#', '#', '#', '#', '#', '#', '#', '#', '#','#'},
+        {'#', '.', '.', '.', '.', '.', '.', '.', '.','#'},
+        {'#', '.', 'P', '.', '.', '.', '.', '.', '.','#'},
+        {'#', '.', '.', '.', '~', '~', '.', '.', '.','#'},
+        {'#', '.', '.', '.', '~', '~', '.', '.', '.','#'},
+        {'#', '.', '.', '.', '.', '.', '.', '.', '.','#'},
         {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
     };
+    mapHeight = worldMap.size();
+    mapWidth = worldMap[0].size();
 }
 
 bool Overworld::canMoveTo(int x, int y) {
@@ -110,6 +118,6 @@ bool Overworld::canMoveTo(int x, int y) {
         return false;
     }
 
-    char tile = worldMap[x][y];
+    char tile = worldMap[y][x];
     return (tile == '.' || tile == 'P');
 }

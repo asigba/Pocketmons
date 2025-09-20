@@ -14,6 +14,7 @@ class Overworld {
         int mapWidth, mapHeight;
         
     public:
+        bool justEncountered = false;
         Overworld(Player* mainPlayer);
         void handleInput(sf::Event& event);
         void update();

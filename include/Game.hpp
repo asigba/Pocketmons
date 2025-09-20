@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "Player.hpp"
 #include "Overworld.hpp"
+#include "Battle.hpp"
 
 using namespace std;
 
@@ -12,6 +13,10 @@ class Game {
         bool running;
         Player* mainPlayer;
         Overworld* overworld;
+        enum GameState {OVERWORLD, BATTLE};
+        GameState currentState;
+        Battle* currentBattle;
+        Pokemon* wildPokemon = nullptr;
 
     public:
         Game();       
