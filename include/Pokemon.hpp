@@ -31,4 +31,5 @@ class Pokemon {
         void takeDamage(int damage);
         bool isAlive();
         void displayInfo();
+        const vector<Move>& getMoves() const;
 };

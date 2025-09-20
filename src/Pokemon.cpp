@@ -72,3 +72,7 @@ bool Pokemon::isAlive() {
 void Pokemon::displayInfo() {
     
 }
+
+vector<Move> Pokemon::getMoves() const {
+    return moves;
+}

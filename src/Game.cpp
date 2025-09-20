@@ -84,7 +84,57 @@ void Game::render() {
     window.clear(sf::Color::Black);
     
     // Render the overworld
-    overworld->render(window);
+    if(currentState == OVERWORLD) {
+        overworld->render(window);
+    } else if (currentState == BATTLE && currentBATTLE && wildPokemon) {
+        sf::Font font;
+        font.loadFromFile("assets/arial.ttf");
+
+        //Draw player pokemon info
+        sf::Text playerText;
+        playerText.setFont(font);
+        playerText.setCharacterSize(24);
+        playerText.setFillColor(sf::Color::White);
+        playerText.setPosition(50,300);
+        playerText.setString(
+            mainPlayer->getActivePokemon()->getName() + " HP: " +
+            std::to_string(mainPlayer->getActivePokemon()->getHP())
+        );
+        window.draw(playerText);
+
+        // draw wild pokemon info
+        sf::Text wildText;
+        wildText.setFont(font);
+        wildText.setCharacterSize(24);
+        wildText.setFillColor(sf::Color::White);
+        wildText.setPosition(400,50);
+        wildText.setString(
+            wildPokemon->getName() + " HP: " +
+            std::to_string(mainPlayer->getHP())
+        );
+        window.draw(wildText);
+
+        // Draw a simple box for moves
+        sf::RectangleShape moveBox(sf::Vector2f(700,100));
+        moveBox.setFillColor(sf::Color(50,50,50));
+        moveBox.setPosition(50,500);
+        window.draw(moveBox);
+
+        // Draw move names
+        for(size_t i = 0; i < mainPlayer->getActivePokemon()->getMoves().size(); ++i){
+            sf::Text moveText;
+            moveText.setFont(font);
+            moveText.setCharacterSize(20);
+            moveText.setFillColor(sf::Color::Yellow);
+            moveText.setPosition(70 + i * 180, 520);
+            moveText.setString(
+                std::to_string(i + 1) + ". " + 
+                mainPlayer->getActivePokemon()->getMoves()[i].getName()
+            );
+            window.draw(moveText)
+        }
+    }
+    
     
     window.display();
 }
