@@ -3,8 +3,8 @@
 
 using namespace std;
 
-
 Overworld::Overworld(Player* mainPlayer): player(mainPlayer), playerX(2), playerY(2){
+    sheet = new SpriteSheet("assets/Tilesets/Grass.png", 16, 16);
     initializeMap();
 }
 
@@ -34,8 +34,12 @@ void Overworld::update() {
 
 }
 
+Overworld::~Overworld() {
+    delete sheet;
+}
+
 void Overworld::render(sf::RenderWindow& window){
-    int tileSize = 64;  // Size of each tile in pixels
+    int tileSize = 32;  // Size of each tile in pixels    
     
     // Draw the map
     for (int y = 0; y < mapHeight; y++) {
@@ -47,21 +51,28 @@ void Overworld::render(sf::RenderWindow& window){
             switch (worldMap[y][x]) {
                 case '#':  // Wall
                     tile.setFillColor(sf::Color::Black);
+                    window.draw(tile); 
                     break;
                 case '.':  // Grass
-                    tile.setFillColor(sf::Color::Green);
+                {
+                    sf::Sprite grass = sheet->getTile(1,1);
+                    grass.setPosition(x * tileSize, y * tileSize);
+                    window.draw(grass);
+                    // tile.setFillColor(sf::Color::Green);
                     break;
+                }                    
                 case 'P':  // Pokemon Center
                     tile.setFillColor(sf::Color::Red);
+                    window.draw(tile); 
                     break;
                 case '~':  // Water
                     tile.setFillColor(sf::Color::Blue);
+                    window.draw(tile); 
                     break;
                 default:
                     tile.setFillColor(sf::Color::White);
+                    window.draw(tile); 
             }
-            
-            window.draw(tile);
         }
     }
     

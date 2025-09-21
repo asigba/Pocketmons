@@ -1,6 +1,8 @@
 #include "Game.hpp"
 #include "Overworld.hpp"
 #include "Battle.hpp"
+#include "Pokemon.hpp"
+#include "Move.hpp"
 #include <SFML/Graphics.hpp>
 
 Game::Game() : window(sf::VideoMode(640, 448), "Pocketmons"), running(true){

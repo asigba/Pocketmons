@@ -121,7 +121,7 @@ void Battle::displayBattleStatus() {
 
 void Battle::startBattle() {
     while(battleActive) {
-        cout << "Battle Loop running, turn: " << turn <<endl;
+        cout << "Battle Loop running, turn: " << turn << endl;
         displayBattleStatus();
         if(isBattleOver()) {
             cout << "Battle over detected in loop." <<endl;
