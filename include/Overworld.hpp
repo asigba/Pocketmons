@@ -14,6 +14,7 @@ class Overworld {
         vector<vector<char>> worldMap;
         int mapWidth, mapHeight;
         SpriteSheet* sheet;
+        sf::View camera;
         
     public:
         bool justEncountered = false;

@@ -4,8 +4,10 @@
 using namespace std;
 
 Overworld::Overworld(Player* mainPlayer): player(mainPlayer), playerX(2), playerY(2){
-    sheet = new SpriteSheet("assets/Tilesets/Grass.png", 16, 16);
+    sheet = new SpriteSheet("assets/Tilesets/Grass.png", 64, 64);
     initializeMap();
+    camera.setSize(640, 448);
+    camera.setCenter(playerX * 64 + 32, playerY * 64 + 32);
 }
 
 void Overworld::handleInput(sf::Event& event) {
@@ -39,7 +41,9 @@ Overworld::~Overworld() {
 }
 
 void Overworld::render(sf::RenderWindow& window){
-    int tileSize = 32;  // Size of each tile in pixels    
+    int tileSize = 64;  // Size of each tile in pixels    
+
+    window.setView(camera);
     
     // Draw the map
     for (int y = 0; y < mapHeight; y++) {
@@ -88,6 +92,7 @@ bool Overworld::checkEncounter(){
 
     if (randomChance < 10) {
         cout << "Wild POkemon encountered!!" << "\n";
+        camera.setCenter(320,224);
         return true;
     }
 
@@ -101,6 +106,8 @@ void Overworld::movePlayer(int deltaX, int deltaY) {
     if(canMoveTo(newX, newY)) {
         playerX = newX;
         playerY = newY;
+
+        camera.setCenter(playerX * 64 + 32, playerY * 64 + 32);
 
         if (worldMap[newY][newX] == '.') {
             justEncountered = checkEncounter();
