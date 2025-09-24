@@ -1,14 +1,17 @@
 #include "Overworld.hpp"
 #include <fstream>
 #include <SFML/Graphics.hpp>
+#include "json.hpp"
+using json = nlohmann::json;
 
 using namespace std;
 
 Overworld::Overworld(Player* mainPlayer): player(mainPlayer), playerX(2), playerY(2){
-    sheet = new SpriteSheet("assets/Tilesets/Grass.png", 64, 64);
+    sheet = new SpriteSheet("assets/Tilesets/Grass.png", 16, 16); // Grass sprite sheet
+    trees = new SpriteSheet("assets/Objects/Basic_Grass_Biom_things.png",32,32); // Tree sprite sheet
     initializeMap();
-    camera.setSize(640, 448);
-    camera.setCenter(playerX * 64 + 32, playerY * 64 + 32);
+    camera.setSize(200, 100);
+    camera.setCenter(playerX * 16 + 32, playerY * 16 + 32);
 }
 
 void Overworld::handleInput(sf::Event& event) {
@@ -39,50 +42,94 @@ void Overworld::update() {
 
 Overworld::~Overworld() {
     delete sheet;
+    delete trees;
+}
+
+void Overworld::loadJsonMap(const std::string filename){
+    worldMap.clear();
+    std::ifstream file(filename);
+    json mapData;
+    file >> mapData;
+
+    int width = mapData["width"];
+    int height = mapData["height"];
+    auto& layer = mapData["layers"];
+    auto& data = layer[0]["data"]; 
+
+    for (int y = 0; y < height; ++y) {
+        std::vector<char> row;
+        for (int x = 0; x < width; ++x) {
+            int tileId = data[y * width + x];
+            row.push_back(mapTileIdToChar(tileId));
+        }
+        worldMap.push_back(row);
+    }
+
+    mapHeight = height;
+    mapWidth = width;
+}
+
+char Overworld::mapTileIdToChar(int tileId) {
+    switch(tileId) {
+        case 1: return '.'; //grass
+        case 2: return '#'; //wall
+        case 3: return ','; // dirt
+        case 4: return 'P';
+        default: return ' ';
+    }
 }
 
 void Overworld::render(sf::RenderWindow& window){
-    int tileSize = 64;  // Size of each tile in pixels    
+    int tileSize = 16;  // Size of each tile in pixels    
 
     window.setView(camera);
     
     // Draw the map
-    for (int y = 0; y < mapHeight; y++) {
-        for (int x = 0; x < mapWidth; x++) {
-            sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
-            tile.setPosition(x * tileSize, y * tileSize);
+    // for (int y = 0; y < mapHeight; y++) {
+    //     for (int x = 0; x < mapWidth; x++) {
+    //         sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
+    //         tile.setPosition(x * tileSize, y * tileSize);
             
-            // Set color based on tile type
-            switch (worldMap[y][x]) {
-                case '#':  // Wall
-                    tile.setFillColor(sf::Color::Black);
-                    window.draw(tile); 
-                    break;
-                case '.':  // Grass
-                {
-                    sf::Sprite grass = sheet->getTile(1,1);
-                    grass.setPosition(x * tileSize, y * tileSize);
-                    window.draw(grass);
-                    // tile.setFillColor(sf::Color::Green);
-                    break;
-                }
-                case ',': // Dirt
-                    tile.setFillColor(sf::Color::Cyan);
-                    window.draw(tile);
-                    break;                    
-                case 'P':  // Pokemon Center
-                    tile.setFillColor(sf::Color::Red);
-                    window.draw(tile); 
-                    break;
-                case '~':  // Water
-                    tile.setFillColor(sf::Color::Blue);
-                    window.draw(tile); 
-                    break;
-                default:
-                    tile.setFillColor(sf::Color::White);
-                    window.draw(tile); 
-            }
-        }
+    //         // Set color based on tile type
+    //         switch (worldMap[y][x]) {
+    //             case '#':  // Tree Wall
+    //                 {
+    //                     sf::Sprite tree = trees->getTile(1,0);
+    //                     tree.setPosition(x * tileSize, y * tileSize);
+    //                     window.draw(tree);                   
+    //                     break;
+    //                 }                    
+    //             case '.':  // Grass
+    //             {
+    //                 sf::Sprite grass = sheet->getTile(1,1);
+    //                 grass.setPosition(x * tileSize, y * tileSize);
+    //                 window.draw(grass);                   
+    //                 break;
+    //             }
+    //             case '/': // Grass Edge
+    //             {
+    //                 sf::Sprite grass1 = sheet->getTile(1,0);
+    //                 grass1.setPosition(x * tileSize, y * tileSize);
+    //                 window.draw(grass1);
+    //                 break;
+    //             }                    
+    //             case ',': // Dirt
+    //                 tile.setFillColor(sf::Color::Cyan);
+    //                 window.draw(tile);
+    //                 break;                    
+    //             case 'P':  // Pokemon Center
+    //                 tile.setFillColor(sf::Color::Red);
+    //                 window.draw(tile); 
+    //                 break;
+    //             case '~':  // Water
+    //                 tile.setFillColor(sf::Color::Blue);
+    //                 window.draw(tile); 
+    //                 break;
+    //             default:
+    //                 tile.setFillColor(sf::Color::White);
+    //                 window.draw(tile); 
+    //         }
+    //     }
     }
     
     // Draw the player
@@ -96,7 +143,6 @@ bool Overworld::checkEncounter(){
     int randomChance = rand() % 100;
 
     if (randomChance < 10) {
-        cout << "Wild POkemon encountered!!" << "\n";
         camera.setCenter(320,224);
         return true;
     }
@@ -112,7 +158,7 @@ void Overworld::movePlayer(int deltaX, int deltaY) {
         playerX = newX;
         playerY = newY;
 
-        camera.setCenter(playerX * 64 + 32, playerY * 64 + 32);
+        camera.setCenter(playerX * 16 + 32, playerY * 16 + 32);
 
         if (worldMap[newY][newX] == '.') {
             justEncountered = checkEncounter();
@@ -137,14 +183,15 @@ void Overworld::loadMap(const std::string& filename) {
 }
 
 void Overworld::initializeMap() {
-    loadMap("assets/Maps/town.txt");
+    // loadMap("assets/Maps/town.txt");
+    loadJsonMap("assets/Maps/town.tmj");
 }
 
 void Overworld::switchMap(const std::string& filename, int newPlayerX, int newPlayerY) {
     loadMap(filename);
     playerX = newPlayerX;
     playerY = newPlayerY;
-    camera.setCenter(playerX * 64 + 32, playerY * 64 + 32);
+    camera.setCenter(playerX * 16 + 32, playerY * 16 + 32);
 }
 
 bool Overworld::canMoveTo(int x, int y) {

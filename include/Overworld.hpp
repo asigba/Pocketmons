@@ -14,6 +14,7 @@ class Overworld {
         vector<vector<char>> worldMap;
         int mapWidth, mapHeight;
         SpriteSheet* sheet;
+        SpriteSheet* trees;
         sf::View camera;
         
     public:
@@ -28,5 +29,7 @@ class Overworld {
         bool canMoveTo(int x, int y);
         void loadMap(const std::string& filename);
         void switchMap(const std::string& filename, int newPlayerX, int newPlayerY);
+        void loadJsonMap(const std::string filename);
+        char mapTileIdToChar(int tileId);
         void initializeMap();
 };
