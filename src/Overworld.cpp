@@ -70,13 +70,18 @@ void Overworld::loadJsonMap(const std::string filename){
 }
 
 char Overworld::mapTileIdToChar(int tileId) {
-    switch(tileId) {
-        case 1: return '.'; //grass
-        case 2: return '#'; //wall
-        case 3: return ','; // dirt
-        case 4: return 'P';
-        default: return ' ';
-    }
+    if (tileId == 0) return ' '; //empty
+    if (tileId == 2) return '/'; // grass top edge
+    if (tileId == 1) return '<'; // grass top left corner
+    if (tileId == 12) return '['; // gass left edge
+    if (tileId == 13) return '.'; // grass
+    if (tileId == 14) return ']'; // grass right edge
+    if (tileId == 24) return '?'; // grass bottom edge
+    if (tileId >=78 && tileId < 155) return ','; // tilled dirt
+    if (tileId >= 155 && tileId < 159) return '~'; //water
+    if (tileId >= 159 && tileId < 194) return 'P'; // House
+    if (tileId >= 94) return '#'; // wall
+    return ' ';
 }
 
 void Overworld::render(sf::RenderWindow& window){
@@ -85,51 +90,79 @@ void Overworld::render(sf::RenderWindow& window){
     window.setView(camera);
     
     // Draw the map
-    // for (int y = 0; y < mapHeight; y++) {
-    //     for (int x = 0; x < mapWidth; x++) {
-    //         sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
-    //         tile.setPosition(x * tileSize, y * tileSize);
+    for (int y = 0; y < mapHeight; y++) {
+        for (int x = 0; x < mapWidth; x++) {
+            sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
+            tile.setPosition(x * tileSize, y * tileSize);
             
-    //         // Set color based on tile type
-    //         switch (worldMap[y][x]) {
-    //             case '#':  // Tree Wall
-    //                 {
-    //                     sf::Sprite tree = trees->getTile(1,0);
-    //                     tree.setPosition(x * tileSize, y * tileSize);
-    //                     window.draw(tree);                   
-    //                     break;
-    //                 }                    
-    //             case '.':  // Grass
-    //             {
-    //                 sf::Sprite grass = sheet->getTile(1,1);
-    //                 grass.setPosition(x * tileSize, y * tileSize);
-    //                 window.draw(grass);                   
-    //                 break;
-    //             }
-    //             case '/': // Grass Edge
-    //             {
-    //                 sf::Sprite grass1 = sheet->getTile(1,0);
-    //                 grass1.setPosition(x * tileSize, y * tileSize);
-    //                 window.draw(grass1);
-    //                 break;
-    //             }                    
-    //             case ',': // Dirt
-    //                 tile.setFillColor(sf::Color::Cyan);
-    //                 window.draw(tile);
-    //                 break;                    
-    //             case 'P':  // Pokemon Center
-    //                 tile.setFillColor(sf::Color::Red);
-    //                 window.draw(tile); 
-    //                 break;
-    //             case '~':  // Water
-    //                 tile.setFillColor(sf::Color::Blue);
-    //                 window.draw(tile); 
-    //                 break;
-    //             default:
-    //                 tile.setFillColor(sf::Color::White);
-    //                 window.draw(tile); 
-    //         }
-    //     }
+            // Set color based on tile type
+            switch (worldMap[y][x]) {
+                case '#':  // Tree Wall
+                    {
+                        sf::Sprite tree = trees->getTile(1,0);
+                        tree.setPosition(x * tileSize, y * tileSize);
+                        window.draw(tree);                   
+                        break;
+                    }                    
+                case '[':  // Grass
+                {
+                    sf::Sprite grass = sheet->getTile(0,1);
+                    grass.setPosition(x * tileSize, y * tileSize);
+                    window.draw(grass);                   
+                    break;
+                }
+                case ']':  // Grass
+                {
+                    sf::Sprite grass = sheet->getTile(2,1);
+                    grass.setPosition(x * tileSize, y * tileSize);
+                    window.draw(grass);                   
+                    break;
+                }
+                case '?':  // Grass
+                {
+                    sf::Sprite grass = sheet->getTile(1,2);
+                    grass.setPosition(x * tileSize, y * tileSize);
+                    window.draw(grass);                   
+                    break;
+                }
+                case '.':  // Grass
+                {
+                    sf::Sprite grass = sheet->getTile(1,1);
+                    grass.setPosition(x * tileSize, y * tileSize);
+                    window.draw(grass);                   
+                    break;
+                }
+                case '<':  // Grass Top left Corner
+                {
+                    sf::Sprite grass = sheet->getTile(0,0);
+                    grass.setPosition(x * tileSize, y * tileSize);
+                    window.draw(grass);                   
+                    break;
+                }
+                case '/': // Grass Top Edge
+                {
+                    sf::Sprite grass1 = sheet->getTile(1,0);
+                    grass1.setPosition(x * tileSize, y * tileSize);
+                    window.draw(grass1);
+                    break;
+                }                    
+                case ',': // Dirt
+                    tile.setFillColor(sf::Color::Cyan);
+                    window.draw(tile);
+                    break;                    
+                case 'P':  // Pokemon Center
+                    tile.setFillColor(sf::Color::Red);
+                    window.draw(tile); 
+                    break;
+                case '~':  // Water
+                    tile.setFillColor(sf::Color::Blue);
+                    window.draw(tile); 
+                    break;
+                default:
+                    tile.setFillColor(sf::Color::White);
+                    window.draw(tile); 
+            }
+        }
     }
     
     // Draw the player
@@ -159,8 +192,9 @@ void Overworld::movePlayer(int deltaX, int deltaY) {
         playerY = newY;
 
         camera.setCenter(playerX * 16 + 32, playerY * 16 + 32);
-
-        if (worldMap[newY][newX] == '.') {
+        
+        // Put '.' back into this 
+        if (worldMap[newY][newX] == 'X') {
             justEncountered = checkEncounter();
         } else if(worldMap[newY][newX] == 'D'){
             switchMap("assets/Maps/route1.txt", 1, 1);
@@ -200,5 +234,5 @@ bool Overworld::canMoveTo(int x, int y) {
     }
 
     char tile = worldMap[y][x];
-    return (tile == '.' || tile == 'P' || tile == ',' || tile == 'D');
+    return (tile != '#');
 }
