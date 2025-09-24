@@ -1,4 +1,5 @@
 #include "Overworld.hpp"
+#include <fstream>
 #include <SFML/Graphics.hpp>
 
 using namespace std;
@@ -64,7 +65,11 @@ void Overworld::render(sf::RenderWindow& window){
                     window.draw(grass);
                     // tile.setFillColor(sf::Color::Green);
                     break;
-                }                    
+                }
+                case ',': // Dirt
+                    tile.setFillColor(sf::Color::Cyan);
+                    window.draw(tile);
+                    break;                    
                 case 'P':  // Pokemon Center
                     tile.setFillColor(sf::Color::Red);
                     window.draw(tile); 
@@ -111,24 +116,35 @@ void Overworld::movePlayer(int deltaX, int deltaY) {
 
         if (worldMap[newY][newX] == '.') {
             justEncountered = checkEncounter();
+        } else if(worldMap[newY][newX] == 'D'){
+            switchMap("assets/Maps/route1.txt", 1, 1);
         } else {
             justEncountered = false;
         }
     }
 }
 
-void Overworld::initializeMap() {
-    worldMap = {
-        {'#', '#', '#', '#', '#', '#', '#', '#', '#','#'},
-        {'#', '.', '.', '.', '.', '.', '.', '.', '.','#'},
-        {'#', '.', 'P', '.', '.', '.', '.', '.', '.','#'},
-        {'#', '.', '.', '.', '~', '~', '.', '.', '.','#'},
-        {'#', '.', '.', '.', '~', '~', '.', '.', '.','#'},
-        {'#', '.', '.', '.', '.', '.', '.', '.', '.','#'},
-        {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}
-    };
+void Overworld::loadMap(const std::string& filename) {
+    worldMap.clear();
+    std::ifstream file(filename);
+    std::string line;
+    while(std::getline(file,line)) {
+        std::vector<char> row(line.begin(), line.end());
+        worldMap.push_back(row);
+    }
     mapHeight = worldMap.size();
-    mapWidth = worldMap[0].size();
+    mapWidth = worldMap.empty() ? 0 : worldMap[0].size();
+}
+
+void Overworld::initializeMap() {
+    loadMap("assets/Maps/town.txt");
+}
+
+void Overworld::switchMap(const std::string& filename, int newPlayerX, int newPlayerY) {
+    loadMap(filename);
+    playerX = newPlayerX;
+    playerY = newPlayerY;
+    camera.setCenter(playerX * 64 + 32, playerY * 64 + 32);
 }
 
 bool Overworld::canMoveTo(int x, int y) {
@@ -137,5 +153,5 @@ bool Overworld::canMoveTo(int x, int y) {
     }
 
     char tile = worldMap[y][x];
-    return (tile == '.' || tile == 'P');
+    return (tile == '.' || tile == 'P' || tile == ',' || tile == 'D');
 }

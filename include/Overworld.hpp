@@ -26,5 +26,7 @@ class Overworld {
         bool checkEncounter();
         void movePlayer(int deltaX, int deltaY);
         bool canMoveTo(int x, int y);
+        void loadMap(const std::string& filename);
+        void switchMap(const std::string& filename, int newPlayerX, int newPlayerY);
         void initializeMap();
 };
