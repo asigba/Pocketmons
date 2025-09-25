@@ -15,7 +15,10 @@ class Overworld {
         int mapWidth, mapHeight;
         SpriteSheet* sheet;
         SpriteSheet* trees;
-        sf::View camera;
+        SpriteSheet* dirt;
+        SpriteSheet* water;
+        sf::View camera;    
+        std::vector<std::vector<std::vector<char>>> layeredMap;
         
     public:
         bool justEncountered = false;

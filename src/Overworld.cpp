@@ -9,6 +9,8 @@ using namespace std;
 Overworld::Overworld(Player* mainPlayer): player(mainPlayer), playerX(2), playerY(2){
     sheet = new SpriteSheet("assets/Tilesets/Grass.png", 16, 16); // Grass sprite sheet
     trees = new SpriteSheet("assets/Objects/Basic_Grass_Biom_things.png",32,32); // Tree sprite sheet
+    dirt = new SpriteSheet("assets/Tilesets/Tilled_Dirt_v2.png", 16, 16); // Tilled Dirt sheet
+    water = new SpriteSheet("assets/Tilesets/Water.png",16,16);
     initializeMap();
     camera.setSize(200, 100);
     camera.setCenter(playerX * 16 + 32, playerY * 16 + 32);
@@ -43,6 +45,7 @@ void Overworld::update() {
 Overworld::~Overworld() {
     delete sheet;
     delete trees;
+    delete dirt;
 }
 
 void Overworld::loadJsonMap(const std::string filename){
@@ -53,35 +56,26 @@ void Overworld::loadJsonMap(const std::string filename){
 
     int width = mapData["width"];
     int height = mapData["height"];
-    auto& layer = mapData["layers"];
-    auto& data = layer[0]["data"]; 
+    auto& layers = mapData["layers"];    
+    int numLayers = layers.size();
 
-    for (int y = 0; y < height; ++y) {
-        std::vector<char> row;
-        for (int x = 0; x < width; ++x) {
-            int tileId = data[y * width + x];
-            row.push_back(mapTileIdToChar(tileId));
+    for (int l = 0; l < numLayers; ++l) {
+        auto& data = layers[l]["data"];
+        std::vector<std::vector<char>> layerMap;  
+        for (int y = 0; y < height; ++y) {
+            std::vector<char> row;
+            for (int x = 0; x < width; ++x) {
+                int tileId = data[y * width + x];
+                row.push_back(tileId);
+            }
+            layerMap.push_back(row);
+            worldMap.push_back(row);
         }
-        worldMap.push_back(row);
+        layeredMap.push_back(layerMap);
     }
 
     mapHeight = height;
     mapWidth = width;
-}
-
-char Overworld::mapTileIdToChar(int tileId) {
-    if (tileId == 0) return ' '; //empty
-    if (tileId == 2) return '/'; // grass top edge
-    if (tileId == 1) return '<'; // grass top left corner
-    if (tileId == 12) return '['; // gass left edge
-    if (tileId == 13) return '.'; // grass
-    if (tileId == 14) return ']'; // grass right edge
-    if (tileId == 24) return '?'; // grass bottom edge
-    if (tileId >=78 && tileId < 155) return ','; // tilled dirt
-    if (tileId >= 155 && tileId < 159) return '~'; //water
-    if (tileId >= 159 && tileId < 194) return 'P'; // House
-    if (tileId >= 94) return '#'; // wall
-    return ' ';
 }
 
 void Overworld::render(sf::RenderWindow& window){
@@ -90,77 +84,122 @@ void Overworld::render(sf::RenderWindow& window){
     window.setView(camera);
     
     // Draw the map
-    for (int y = 0; y < mapHeight; y++) {
-        for (int x = 0; x < mapWidth; x++) {
-            sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
-            tile.setPosition(x * tileSize, y * tileSize);
-            
-            // Set color based on tile type
-            switch (worldMap[y][x]) {
-                case '#':  // Tree Wall
+    for (size_t l = 0; l < layeredMap.size(); ++l) {
+        for (int y = 0; y < mapHeight; y++) {
+            for (int x = 0; x < mapWidth; x++) {
+                sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
+                tile.setPosition(x * tileSize, y * tileSize);
+                
+                // Set color based on tile type
+                switch (layeredMap[l][y][x]) {
+                    case 0: break;
+                    case 190:  // Tree Wall
+                        {
+                            sf::Sprite tree = trees->getTile(1,0);
+                            tree.setPosition(x * tileSize, y * tileSize);
+                            window.draw(tree);                   
+                            break;
+                        }                    
+                    case 12:  // Grass
                     {
-                        sf::Sprite tree = trees->getTile(1,0);
-                        tree.setPosition(x * tileSize, y * tileSize);
-                        window.draw(tree);                   
+                        sf::Sprite grass = sheet->getTile(0,1);
+                        grass.setPosition(x * tileSize, y * tileSize);
+                        window.draw(grass);                   
                         break;
-                    }                    
-                case '[':  // Grass
-                {
-                    sf::Sprite grass = sheet->getTile(0,1);
-                    grass.setPosition(x * tileSize, y * tileSize);
-                    window.draw(grass);                   
-                    break;
+                    }
+                    case 14:  // Grass
+                    {
+                        sf::Sprite grass = sheet->getTile(2,1);
+                        grass.setPosition(x * tileSize, y * tileSize);
+                        window.draw(grass);                   
+                        break;
+                    }
+                    case 24:  // Grass
+                    {
+                        sf::Sprite grass = sheet->getTile(1,2);
+                        grass.setPosition(x * tileSize, y * tileSize);
+                        window.draw(grass);                   
+                        break;
+                    }
+                    case 13:  // Grass
+                    {
+                        sf::Sprite grass = sheet->getTile(1,1);
+                        grass.setPosition(x * tileSize, y * tileSize);
+                        window.draw(grass);                   
+                        break;
+                    }
+                    case 1:  // Grass Top left Corner
+                    {
+                        sf::Sprite grass = sheet->getTile(0,0);
+                        grass.setPosition(x * tileSize, y * tileSize);
+                        window.draw(grass);                   
+                        break;
+                    }
+                    case 2: // Grass Top Edge
+                    {
+                        sf::Sprite grass1 = sheet->getTile(1,0);
+                        grass1.setPosition(x * tileSize, y * tileSize);
+                        window.draw(grass1);
+                        break;
+                    }
+                    case 90: // Dirt 
+                    {
+                        sf::Sprite dirt1 = dirt->getTile(1,1);
+                        dirt1.setPosition(x * tileSize, y * tileSize);
+                        window.draw(dirt1);
+                        break;
+                    }                      
+                    case 79: // Dirt top edge
+                        {
+                        sf::Sprite dirt1 = dirt->getTile(1,0);
+                        dirt1.setPosition(x * tileSize, y * tileSize);
+                        window.draw(dirt1);
+                        break;
+                    }
+                    case 78: 
+                        {
+                        sf::Sprite dirt1 = dirt->getTile(0,0);
+                        dirt1.setPosition(x * tileSize, y * tileSize);
+                        window.draw(dirt1);
+                        break;
+                    }
+                    case 100: // bottom corner dirt
+                        {
+                        sf::Sprite dirt1 = dirt->getTile(0,2);
+                        dirt1.setPosition(x * tileSize, y * tileSize);
+                        window.draw(dirt1);
+                        break;
+                    }
+                    case 101: // bottom edge dirt
+                        {
+                        sf::Sprite dirt1 = dirt->getTile(1,2);
+                        dirt1.setPosition(x * tileSize, y * tileSize);
+                        window.draw(dirt1);
+                        break;
+                    }  
+                    case 89: // bottom edge dirt
+                        {
+                        sf::Sprite dirt1 = dirt->getTile(0,1);
+                        dirt1.setPosition(x * tileSize, y * tileSize);
+                        window.draw(dirt1);
+                        break;
+                    }                             
+                    case 159:  // Pokemon Center
+                        tile.setFillColor(sf::Color::Red);
+                        window.draw(tile); 
+                        break;
+                    case 155:  // Water
+                        {
+                        sf::Sprite water1 = water->getTile(0,0);
+                        water1.setPosition(x * tileSize, y * tileSize);
+                        window.draw(water1);
+                        break;
+                    }  
+                    
+                    default:
+                        tile.setFillColor(sf::Color::White);
+                        window.draw(tile); 
                 }
-                case ']':  // Grass
-                {
-                    sf::Sprite grass = sheet->getTile(2,1);
-                    grass.setPosition(x * tileSize, y * tileSize);
-                    window.draw(grass);                   
-                    break;
-                }
-                case '?':  // Grass
-                {
-                    sf::Sprite grass = sheet->getTile(1,2);
-                    grass.setPosition(x * tileSize, y * tileSize);
-                    window.draw(grass);                   
-                    break;
-                }
-                case '.':  // Grass
-                {
-                    sf::Sprite grass = sheet->getTile(1,1);
-                    grass.setPosition(x * tileSize, y * tileSize);
-                    window.draw(grass);                   
-                    break;
-                }
-                case '<':  // Grass Top left Corner
-                {
-                    sf::Sprite grass = sheet->getTile(0,0);
-                    grass.setPosition(x * tileSize, y * tileSize);
-                    window.draw(grass);                   
-                    break;
-                }
-                case '/': // Grass Top Edge
-                {
-                    sf::Sprite grass1 = sheet->getTile(1,0);
-                    grass1.setPosition(x * tileSize, y * tileSize);
-                    window.draw(grass1);
-                    break;
-                }                    
-                case ',': // Dirt
-                    tile.setFillColor(sf::Color::Cyan);
-                    window.draw(tile);
-                    break;                    
-                case 'P':  // Pokemon Center
-                    tile.setFillColor(sf::Color::Red);
-                    window.draw(tile); 
-                    break;
-                case '~':  // Water
-                    tile.setFillColor(sf::Color::Blue);
-                    window.draw(tile); 
-                    break;
-                default:
-                    tile.setFillColor(sf::Color::White);
-                    window.draw(tile); 
             }
         }
     }
@@ -217,7 +256,6 @@ void Overworld::loadMap(const std::string& filename) {
 }
 
 void Overworld::initializeMap() {
-    // loadMap("assets/Maps/town.txt");
     loadJsonMap("assets/Maps/town.tmj");
 }
 
