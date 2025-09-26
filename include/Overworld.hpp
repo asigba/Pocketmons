@@ -11,14 +11,17 @@ class Overworld {
     private:
         Player* player;
         int playerX, playerY;
-        vector<vector<char>> worldMap;
+        vector<vector<int>> worldMap;
         int mapWidth, mapHeight;
         SpriteSheet* sheet;
         SpriteSheet* trees;
         SpriteSheet* dirt;
         SpriteSheet* water;
+        SpriteSheet* bush;
+        SpriteSheet* houseWalls;
+        SpriteSheet* houseRoofs;
         sf::View camera;    
-        std::vector<std::vector<std::vector<char>>> layeredMap;
+        std::vector<std::vector<std::vector<int>>> layeredMap;
         
     public:
         bool justEncountered = false;
